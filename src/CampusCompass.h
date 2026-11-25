@@ -33,6 +33,12 @@ private:
     bool loadClasses(const string &filepath);
     vector<string> splitLine(const string &line);
     int timeToMinutes(const string &time);
+
+    bool splitCommand(const string &command, vector<string> &words);
+    bool isNumber(const string &text);
+    bool isValidName(const string &name);
+    bool isValidStudentId(const string &studentId);
+    bool isValidClassCode(const string &classCode);
 public:
     // Think about what helper functions you will need in the algorithm
     CampusCompass(); // constructor

@@ -1,6 +1,8 @@
 #include "CampusCompass.h"
 
+#include <cctype>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -22,7 +24,87 @@ bool CampusCompass::ParseCommand(const string &command) {
     // hint: return a boolean for validation when testing. For example:
     bool is_valid = true; // replace with your actual validity checking
 
+    vector<string> words;
+    if (!splitCommand(command, words) || words.empty()) {
+        is_valid = false;
+    } else {
+        is_valid = false;
+    }
+
+    if (!is_valid) {
+        cout << "unsuccessful" << endl;
+    }
     return is_valid;
+}
+
+bool CampusCompass::splitCommand(const string &command, vector<string> &words) {
+    string currentWord = "";
+    bool insideQuotes = false;
+
+    for (int i = 0; i < (int)command.size(); i++) {
+        char letter = command[i];
+        if (letter == '"') {
+            currentWord += letter;
+            insideQuotes = !insideQuotes;
+        } else if (letter == ' ' && !insideQuotes) {
+            if (!currentWord.empty()) {
+                words.push_back(currentWord);
+                currentWord = "";
+            }
+        } else if (letter != '\r' && letter != '\n') {
+            currentWord += letter;
+        }
+    }
+    if (!currentWord.empty()) {
+        words.push_back(currentWord);
+    }
+
+    return !insideQuotes;
+}
+
+bool CampusCompass::isNumber(const string &text) {
+    if (text.empty()) {
+        return false;
+    }
+    for (int i = 0; i < (int)text.size(); i++) {
+        if (!isdigit(text[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool CampusCompass::isValidName(const string &name) {
+    if (name.empty()) {
+        return false;
+    }
+    for (int i = 0; i < (int)name.size(); i++) {
+        if (!isalpha(name[i]) && name[i] != ' ') {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool CampusCompass::isValidStudentId(const string &studentId) {
+    return studentId.size() == 8 && isNumber(studentId);
+}
+
+bool CampusCompass::isValidClassCode(const string &classCode) {
+    if (classCode.size() != 7) {
+        return false;
+    }
+    for (int i = 0; i < 3; i++) {
+        if (classCode[i] < 'A' || classCode[i] > 'Z') {
+            return false;
+        }
+    }
+    for (int i = 3; i < 7; i++) {
+        if (!isdigit(classCode[i])) {
+            return false;
+        }
+    }
+    return classes.count(classCode) > 0;
 }
 
 bool CampusCompass::loadEdges(const string &filepath) {
