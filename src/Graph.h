@@ -1,0 +1,26 @@
+#pragma once
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+using namespace std;
+
+struct Edge {
+    int toId;
+    int weight;
+    bool isOpen;
+};
+
+class Graph {
+private:
+    unordered_map<int, vector<Edge>> adjacencyList;
+    unordered_map<int, string> locationNames;
+
+public:
+    void addEdge(int fromId, int toId, int weight);
+    void setLocationName(int locationId, const string &name);
+    bool hasLocation(int locationId);
+    bool hasEdge(int fromId, int toId);
+    string getLocationName(int locationId);
+    vector<Edge> getNeighbors(int locationId);
+};
