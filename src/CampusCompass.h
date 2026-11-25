@@ -34,6 +34,8 @@ private:
     vector<string> splitLine(const string &line);
     int timeToMinutes(const string &time);
 
+    bool insertStudent(const vector<string> &words);
+
     bool splitCommand(const string &command, vector<string> &words);
     bool isNumber(const string &text);
     bool isValidName(const string &name);

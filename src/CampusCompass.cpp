@@ -27,6 +27,8 @@ bool CampusCompass::ParseCommand(const string &command) {
     vector<string> words;
     if (!splitCommand(command, words) || words.empty()) {
         is_valid = false;
+    } else if (words[0] == "insert") {
+        is_valid = insertStudent(words);
     } else {
         is_valid = false;
     }
@@ -35,6 +37,48 @@ bool CampusCompass::ParseCommand(const string &command) {
         cout << "unsuccessful" << endl;
     }
     return is_valid;
+}
+
+bool CampusCompass::insertStudent(const vector<string> &words) {
+    if (words.size() < 5) {
+        return false;
+    }
+
+    string quotedName = words[1];
+    if (quotedName.size() < 3 || quotedName.front() != '"' || quotedName.back() != '"') {
+        return false;
+    }
+    string name = quotedName.substr(1, quotedName.size() - 2);
+    string studentId = words[2];
+    string residenceText = words[3];
+    string classCountText = words[4];
+
+    if (!isValidName(name) || !isValidStudentId(studentId) || students.count(studentId) > 0) {
+        return false;
+    }
+    if (!isNumber(residenceText) || !isNumber(classCountText) || classCountText.size() > 1) {
+        return false;
+    }
+
+    int classCount = stoi(classCountText);
+    if (classCount < 1 || classCount > 6 || (int)words.size() != 5 + classCount) {
+        return false;
+    }
+
+    Student newStudent;
+    newStudent.name = name;
+    newStudent.studentId = studentId;
+    newStudent.residenceId = stoi(residenceText);
+    for (int i = 5; i < (int)words.size(); i++) {
+        if (!isValidClassCode(words[i]) || newStudent.classCodes.count(words[i]) > 0) {
+            return false;
+        }
+        newStudent.classCodes.insert(words[i]);
+    }
+
+    students[studentId] = newStudent;
+    cout << "successful" << endl;
+    return true;
 }
 
 bool CampusCompass::splitCommand(const string &command, vector<string> &words) {
