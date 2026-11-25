@@ -1,4 +1,5 @@
 #pragma once
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -13,12 +14,20 @@ struct ClassInfo {
     int endMinutes;
 };
 
+struct Student {
+    string name;
+    string studentId;
+    int residenceId;
+    set<string> classCodes;
+};
+
 class CampusCompass {
 private:
     // Think about what member variables you need to initialize
     // perhaps some graph representation?
     Graph campusGraph;
     unordered_map<string, ClassInfo> classes;
+    unordered_map<string, Student> students;
 
     bool loadEdges(const string &filepath);
     bool loadClasses(const string &filepath);
