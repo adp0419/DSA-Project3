@@ -1,5 +1,8 @@
 #include "Graph.h"
 
+#include <queue>
+#include <set>
+
 using namespace std;
 
 void Graph::addEdge(int fromId, int toId, int weight) {
@@ -58,6 +61,33 @@ void Graph::toggleEdge(int fromId, int toId) {
             adjacencyList[toId][i].isOpen = !adjacencyList[toId][i].isOpen;
         }
     }
+}
+
+bool Graph::isConnected(int startId, int endId) {
+    if (!hasLocation(startId) || !hasLocation(endId)) {
+        return false;
+    }
+
+    set<int> visited;
+    queue<int> toVisit;
+    visited.insert(startId);
+    toVisit.push(startId);
+
+    while (!toVisit.empty()) {
+        int currentId = toVisit.front();
+        toVisit.pop();
+        if (currentId == endId) {
+            return true;
+        }
+        for (int i = 0; i < (int)adjacencyList[currentId].size(); i++) {
+            Edge edge = adjacencyList[currentId][i];
+            if (edge.isOpen && visited.count(edge.toId) == 0) {
+                visited.insert(edge.toId);
+                toVisit.push(edge.toId);
+            }
+        }
+    }
+    return false;
 }
 
 string Graph::getLocationName(int locationId) {

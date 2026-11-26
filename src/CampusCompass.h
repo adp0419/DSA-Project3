@@ -41,6 +41,7 @@ private:
     bool removeClass(const vector<string> &words);
     bool toggleEdgesClosure(const vector<string> &words);
     bool checkEdgeStatus(const vector<string> &words);
+    bool isConnected(const vector<string> &words);
 
     bool splitCommand(const string &command, vector<string> &words);
     bool isNumber(const string &text);

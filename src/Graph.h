@@ -23,6 +23,7 @@ public:
     bool hasEdge(int fromId, int toId);
     bool isEdgeOpen(int fromId, int toId);
     void toggleEdge(int fromId, int toId);
+    bool isConnected(int startId, int endId);
     string getLocationName(int locationId);
     vector<Edge> getNeighbors(int locationId);
 };

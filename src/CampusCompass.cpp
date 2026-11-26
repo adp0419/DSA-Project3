@@ -41,6 +41,8 @@ bool CampusCompass::ParseCommand(const string &command) {
         is_valid = toggleEdgesClosure(words);
     } else if (words[0] == "checkEdgeStatus") {
         is_valid = checkEdgeStatus(words);
+    } else if (words[0] == "isConnected") {
+        is_valid = isConnected(words);
     } else {
         is_valid = false;
     }
@@ -213,6 +215,24 @@ bool CampusCompass::checkEdgeStatus(const vector<string> &words) {
         cout << "open" << endl;
     } else {
         cout << "closed" << endl;
+    }
+    return true;
+}
+
+bool CampusCompass::isConnected(const vector<string> &words) {
+    if (words.size() != 3 || !isNumber(words[1]) || !isNumber(words[2])) {
+        return false;
+    }
+    if (words[1].size() > 9 || words[2].size() > 9) {
+        return false;
+    }
+    int startId = stoi(words[1]);
+    int endId = stoi(words[2]);
+
+    if (campusGraph.isConnected(startId, endId)) {
+        cout << "successful" << endl;
+    } else {
+        cout << "unsuccessful" << endl;
     }
     return true;
 }
