@@ -43,6 +43,8 @@ bool CampusCompass::ParseCommand(const string &command) {
         is_valid = checkEdgeStatus(words);
     } else if (words[0] == "isConnected") {
         is_valid = isConnected(words);
+    } else if (words[0] == "printShortestEdges") {
+        is_valid = printShortestEdges(words);
     } else {
         is_valid = false;
     }
@@ -233,6 +235,28 @@ bool CampusCompass::isConnected(const vector<string> &words) {
         cout << "successful" << endl;
     } else {
         cout << "unsuccessful" << endl;
+    }
+    return true;
+}
+
+bool CampusCompass::printShortestEdges(const vector<string> &words) {
+    if (words.size() != 2 || students.count(words[1]) == 0) {
+        return false;
+    }
+    Student &student = students[words[1]];
+
+    unordered_map<int, int> distances;
+    unordered_map<int, int> parents;
+    campusGraph.findShortestPaths(student.residenceId, distances, parents);
+
+    cout << "Time For Shortest Edges: " << student.name << endl;
+    for (const string &classCode : student.classCodes) {
+        int classLocationId = classes[classCode].locationId;
+        int travelTime = -1;
+        if (distances.count(classLocationId) > 0) {
+            travelTime = distances[classLocationId];
+        }
+        cout << classCode << ": " << travelTime << endl;
     }
     return true;
 }

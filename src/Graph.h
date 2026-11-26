@@ -24,6 +24,7 @@ public:
     bool isEdgeOpen(int fromId, int toId);
     void toggleEdge(int fromId, int toId);
     bool isConnected(int startId, int endId);
+    void findShortestPaths(int startId, unordered_map<int, int> &distances, unordered_map<int, int> &parents);
     string getLocationName(int locationId);
     vector<Edge> getNeighbors(int locationId);
 };

@@ -1,7 +1,9 @@
 #include "Graph.h"
 
+#include <functional>
 #include <queue>
 #include <set>
+#include <utility>
 
 using namespace std;
 
@@ -88,6 +90,43 @@ bool Graph::isConnected(int startId, int endId) {
         }
     }
     return false;
+}
+
+void Graph::findShortestPaths(int startId, unordered_map<int, int> &distances, unordered_map<int, int> &parents) {
+    distances.clear();
+    parents.clear();
+    if (!hasLocation(startId)) {
+        return;
+    }
+
+    // each pair is (distance, locationId) so the smallest distance comes out first
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> toVisit;
+    set<int> finished;
+    distances[startId] = 0;
+    toVisit.push(make_pair(0, startId));
+
+    while (!toVisit.empty()) {
+        int currentDistance = toVisit.top().first;
+        int currentId = toVisit.top().second;
+        toVisit.pop();
+        if (finished.count(currentId) > 0) {
+            continue;
+        }
+        finished.insert(currentId);
+
+        for (int i = 0; i < (int)adjacencyList[currentId].size(); i++) {
+            Edge edge = adjacencyList[currentId][i];
+            if (!edge.isOpen) {
+                continue;
+            }
+            int newDistance = currentDistance + edge.weight;
+            if (distances.count(edge.toId) == 0 || newDistance < distances[edge.toId]) {
+                distances[edge.toId] = newDistance;
+                parents[edge.toId] = currentId;
+                toVisit.push(make_pair(newDistance, edge.toId));
+            }
+        }
+    }
 }
 
 string Graph::getLocationName(int locationId) {
