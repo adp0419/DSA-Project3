@@ -37,6 +37,10 @@ bool CampusCompass::ParseCommand(const string &command) {
         is_valid = replaceClass(words);
     } else if (words[0] == "removeClass") {
         is_valid = removeClass(words);
+    } else if (words[0] == "toggleEdgesClosure") {
+        is_valid = toggleEdgesClosure(words);
+    } else if (words[0] == "checkEdgeStatus") {
+        is_valid = checkEdgeStatus(words);
     } else {
         is_valid = false;
     }
@@ -167,6 +171,49 @@ bool CampusCompass::removeClass(const vector<string> &words) {
         return false;
     }
     cout << droppedCount << endl;
+    return true;
+}
+
+bool CampusCompass::toggleEdgesClosure(const vector<string> &words) {
+    if (words.size() < 2 || !isNumber(words[1]) || words[1].size() > 9) {
+        return false;
+    }
+    int edgeCount = stoi(words[1]);
+    if ((int)words.size() != 2 + edgeCount * 2) {
+        return false;
+    }
+    for (int i = 2; i < (int)words.size(); i++) {
+        if (!isNumber(words[i]) || words[i].size() > 9) {
+            return false;
+        }
+    }
+
+    for (int i = 2; i < (int)words.size(); i += 2) {
+        int fromId = stoi(words[i]);
+        int toId = stoi(words[i + 1]);
+        campusGraph.toggleEdge(fromId, toId);
+    }
+    cout << "successful" << endl;
+    return true;
+}
+
+bool CampusCompass::checkEdgeStatus(const vector<string> &words) {
+    if (words.size() != 3 || !isNumber(words[1]) || !isNumber(words[2])) {
+        return false;
+    }
+    if (words[1].size() > 9 || words[2].size() > 9) {
+        return false;
+    }
+    int fromId = stoi(words[1]);
+    int toId = stoi(words[2]);
+
+    if (!campusGraph.hasEdge(fromId, toId)) {
+        cout << "DNE" << endl;
+    } else if (campusGraph.isEdgeOpen(fromId, toId)) {
+        cout << "open" << endl;
+    } else {
+        cout << "closed" << endl;
+    }
     return true;
 }
 

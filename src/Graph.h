@@ -21,6 +21,8 @@ public:
     void setLocationName(int locationId, const string &name);
     bool hasLocation(int locationId);
     bool hasEdge(int fromId, int toId);
+    bool isEdgeOpen(int fromId, int toId);
+    void toggleEdge(int fromId, int toId);
     string getLocationName(int locationId);
     vector<Edge> getNeighbors(int locationId);
 };

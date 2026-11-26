@@ -32,6 +32,34 @@ bool Graph::hasEdge(int fromId, int toId) {
     return false;
 }
 
+bool Graph::isEdgeOpen(int fromId, int toId) {
+    if (!hasLocation(fromId)) {
+        return false;
+    }
+    for (int i = 0; i < (int)adjacencyList[fromId].size(); i++) {
+        if (adjacencyList[fromId][i].toId == toId) {
+            return adjacencyList[fromId][i].isOpen;
+        }
+    }
+    return false;
+}
+
+void Graph::toggleEdge(int fromId, int toId) {
+    if (!hasEdge(fromId, toId)) {
+        return;
+    }
+    for (int i = 0; i < (int)adjacencyList[fromId].size(); i++) {
+        if (adjacencyList[fromId][i].toId == toId) {
+            adjacencyList[fromId][i].isOpen = !adjacencyList[fromId][i].isOpen;
+        }
+    }
+    for (int i = 0; i < (int)adjacencyList[toId].size(); i++) {
+        if (adjacencyList[toId][i].toId == fromId) {
+            adjacencyList[toId][i].isOpen = !adjacencyList[toId][i].isOpen;
+        }
+    }
+}
+
 string Graph::getLocationName(int locationId) {
     if (locationNames.count(locationId) == 0) {
         return "";
