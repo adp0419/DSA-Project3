@@ -35,6 +35,10 @@ private:
     int timeToMinutes(const string &time);
 
     bool insertStudent(const vector<string> &words);
+    bool removeStudent(const vector<string> &words);
+    bool dropClass(const vector<string> &words);
+    bool replaceClass(const vector<string> &words);
+    bool removeClass(const vector<string> &words);
 
     bool splitCommand(const string &command, vector<string> &words);
     bool isNumber(const string &text);

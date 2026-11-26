@@ -29,6 +29,14 @@ bool CampusCompass::ParseCommand(const string &command) {
         is_valid = false;
     } else if (words[0] == "insert") {
         is_valid = insertStudent(words);
+    } else if (words[0] == "remove") {
+        is_valid = removeStudent(words);
+    } else if (words[0] == "dropClass") {
+        is_valid = dropClass(words);
+    } else if (words[0] == "replaceClass") {
+        is_valid = replaceClass(words);
+    } else if (words[0] == "removeClass") {
+        is_valid = removeClass(words);
     } else {
         is_valid = false;
     }
@@ -78,6 +86,87 @@ bool CampusCompass::insertStudent(const vector<string> &words) {
 
     students[studentId] = newStudent;
     cout << "successful" << endl;
+    return true;
+}
+
+bool CampusCompass::removeStudent(const vector<string> &words) {
+    if (words.size() != 2 || students.count(words[1]) == 0) {
+        return false;
+    }
+    students.erase(words[1]);
+    cout << "successful" << endl;
+    return true;
+}
+
+bool CampusCompass::dropClass(const vector<string> &words) {
+    if (words.size() != 3) {
+        return false;
+    }
+    string studentId = words[1];
+    string classCode = words[2];
+    if (students.count(studentId) == 0 || !isValidClassCode(classCode)) {
+        return false;
+    }
+
+    Student &student = students[studentId];
+    if (student.classCodes.count(classCode) == 0) {
+        return false;
+    }
+    student.classCodes.erase(classCode);
+    if (student.classCodes.empty()) {
+        students.erase(studentId);
+    }
+    cout << "successful" << endl;
+    return true;
+}
+
+bool CampusCompass::replaceClass(const vector<string> &words) {
+    if (words.size() != 4) {
+        return false;
+    }
+    string studentId = words[1];
+    string oldClassCode = words[2];
+    string newClassCode = words[3];
+    if (students.count(studentId) == 0 || !isValidClassCode(newClassCode)) {
+        return false;
+    }
+
+    Student &student = students[studentId];
+    if (student.classCodes.count(oldClassCode) == 0 || student.classCodes.count(newClassCode) > 0) {
+        return false;
+    }
+    student.classCodes.erase(oldClassCode);
+    student.classCodes.insert(newClassCode);
+    cout << "successful" << endl;
+    return true;
+}
+
+bool CampusCompass::removeClass(const vector<string> &words) {
+    if (words.size() != 2 || !isValidClassCode(words[1])) {
+        return false;
+    }
+    string classCode = words[1];
+
+    int droppedCount = 0;
+    vector<string> emptyStudentIds;
+    for (auto &entry : students) {
+        Student &student = entry.second;
+        if (student.classCodes.count(classCode) > 0) {
+            student.classCodes.erase(classCode);
+            droppedCount++;
+            if (student.classCodes.empty()) {
+                emptyStudentIds.push_back(student.studentId);
+            }
+        }
+    }
+    for (int i = 0; i < (int)emptyStudentIds.size(); i++) {
+        students.erase(emptyStudentIds[i]);
+    }
+
+    if (droppedCount == 0) {
+        return false;
+    }
+    cout << droppedCount << endl;
     return true;
 }
 
