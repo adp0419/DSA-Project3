@@ -47,6 +47,8 @@ bool CampusCompass::ParseCommand(const string &command) {
         is_valid = printShortestEdges(words);
     } else if (words[0] == "printStudentZone") {
         is_valid = printStudentZone(words);
+    } else if (words[0] == "verifySchedule") {
+        is_valid = verifySchedule(words);
     } else {
         is_valid = false;
     }
@@ -288,6 +290,50 @@ bool CampusCompass::printStudentZone(const vector<string> &words) {
 
     int zoneCost = campusGraph.findMinimumSpanningTreeCost(zoneLocationIds);
     cout << "Student Zone Cost For " << student.name << ": " << zoneCost << endl;
+    return true;
+}
+
+bool CampusCompass::verifySchedule(const vector<string> &words) {
+    if (words.size() != 2 || students.count(words[1]) == 0) {
+        return false;
+    }
+    Student &student = students[words[1]];
+    if (student.classCodes.size() < 2) {
+        return false;
+    }
+
+    vector<string> sortedCodes;
+    for (const string &classCode : student.classCodes) {
+        sortedCodes.push_back(classCode);
+    }
+    for (int i = 0; i < (int)sortedCodes.size(); i++) {
+        for (int j = 0; j < (int)sortedCodes.size() - 1 - i; j++) {
+            if (classes[sortedCodes[j]].startMinutes > classes[sortedCodes[j + 1]].startMinutes) {
+                string temp = sortedCodes[j];
+                sortedCodes[j] = sortedCodes[j + 1];
+                sortedCodes[j + 1] = temp;
+            }
+        }
+    }
+
+    cout << "Schedule Check for " << student.name << ":" << endl;
+    for (int i = 0; i < (int)sortedCodes.size() - 1; i++) {
+        ClassInfo currentClass = classes[sortedCodes[i]];
+        ClassInfo nextClass = classes[sortedCodes[i + 1]];
+        int timeGap = nextClass.startMinutes - currentClass.endMinutes;
+
+        unordered_map<int, int> distances;
+        unordered_map<int, int> parents;
+        campusGraph.findShortestPaths(currentClass.locationId, distances, parents);
+
+        bool canMakeIt = distances.count(nextClass.locationId) > 0 && timeGap >= distances[nextClass.locationId];
+        cout << sortedCodes[i] << " - " << sortedCodes[i + 1] << ": ";
+        if (canMakeIt) {
+            cout << "successful" << endl;
+        } else {
+            cout << "unsuccessful" << endl;
+        }
+    }
     return true;
 }
 
