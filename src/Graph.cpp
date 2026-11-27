@@ -129,6 +129,37 @@ void Graph::findShortestPaths(int startId, unordered_map<int, int> &distances, u
     }
 }
 
+int Graph::findMinimumSpanningTreeCost(const set<int> &locationIds) {
+    if (locationIds.empty()) {
+        return 0;
+    }
+
+    // Prim's algorithm, only using open edges where both ends are in locationIds
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> toVisit;
+    set<int> inTree;
+    int totalCost = 0;
+    toVisit.push(make_pair(0, *locationIds.begin()));
+
+    while (!toVisit.empty()) {
+        int edgeWeight = toVisit.top().first;
+        int currentId = toVisit.top().second;
+        toVisit.pop();
+        if (inTree.count(currentId) > 0) {
+            continue;
+        }
+        inTree.insert(currentId);
+        totalCost += edgeWeight;
+
+        for (int i = 0; i < (int)adjacencyList[currentId].size(); i++) {
+            Edge edge = adjacencyList[currentId][i];
+            if (edge.isOpen && locationIds.count(edge.toId) > 0 && inTree.count(edge.toId) == 0) {
+                toVisit.push(make_pair(edge.weight, edge.toId));
+            }
+        }
+    }
+    return totalCost;
+}
+
 string Graph::getLocationName(int locationId) {
     if (locationNames.count(locationId) == 0) {
         return "";

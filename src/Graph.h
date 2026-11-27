@@ -1,4 +1,5 @@
 #pragma once
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -25,6 +26,7 @@ public:
     void toggleEdge(int fromId, int toId);
     bool isConnected(int startId, int endId);
     void findShortestPaths(int startId, unordered_map<int, int> &distances, unordered_map<int, int> &parents);
+    int findMinimumSpanningTreeCost(const set<int> &locationIds);
     string getLocationName(int locationId);
     vector<Edge> getNeighbors(int locationId);
 };

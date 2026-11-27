@@ -45,6 +45,8 @@ bool CampusCompass::ParseCommand(const string &command) {
         is_valid = isConnected(words);
     } else if (words[0] == "printShortestEdges") {
         is_valid = printShortestEdges(words);
+    } else if (words[0] == "printStudentZone") {
+        is_valid = printStudentZone(words);
     } else {
         is_valid = false;
     }
@@ -258,6 +260,34 @@ bool CampusCompass::printShortestEdges(const vector<string> &words) {
         }
         cout << classCode << ": " << travelTime << endl;
     }
+    return true;
+}
+
+bool CampusCompass::printStudentZone(const vector<string> &words) {
+    if (words.size() != 2 || students.count(words[1]) == 0) {
+        return false;
+    }
+    Student &student = students[words[1]];
+
+    unordered_map<int, int> distances;
+    unordered_map<int, int> parents;
+    campusGraph.findShortestPaths(student.residenceId, distances, parents);
+
+    set<int> zoneLocationIds;
+    zoneLocationIds.insert(student.residenceId);
+    for (const string &classCode : student.classCodes) {
+        int currentId = classes[classCode].locationId;
+        if (distances.count(currentId) == 0) {
+            continue;
+        }
+        while (currentId != student.residenceId) {
+            zoneLocationIds.insert(currentId);
+            currentId = parents[currentId];
+        }
+    }
+
+    int zoneCost = campusGraph.findMinimumSpanningTreeCost(zoneLocationIds);
+    cout << "Student Zone Cost For " << student.name << ": " << zoneCost << endl;
     return true;
 }
 
