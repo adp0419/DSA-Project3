@@ -9,7 +9,7 @@ using namespace std;
 struct Edge {
     int toId;
     int weight;
-    bool isOpen;
+    bool isOpen; // closed edges stay in the graph but are skipped
 };
 
 class Graph {

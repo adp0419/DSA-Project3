@@ -99,8 +99,7 @@ void Graph::findShortestPaths(int startId, unordered_map<int, int> &distances, u
         return;
     }
 
-    // each pair is (distance, locationId) so the smallest distance comes out first
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> toVisit;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> toVisit; // pairs are (distance, locationId) so the shortest comes out first
     set<int> finished;
     distances[startId] = 0;
     toVisit.push(make_pair(0, startId));
@@ -129,12 +128,12 @@ void Graph::findShortestPaths(int startId, unordered_map<int, int> &distances, u
     }
 }
 
+// prim's algorithm, only using open edges where both ends are in locationIds
 int Graph::findMinimumSpanningTreeCost(const set<int> &locationIds) {
     if (locationIds.empty()) {
         return 0;
     }
 
-    // Prim's algorithm, only using open edges where both ends are in locationIds
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> toVisit;
     set<int> inTree;
     int totalCost = 0;

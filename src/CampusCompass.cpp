@@ -53,7 +53,7 @@ bool CampusCompass::ParseCommand(const string &command) {
         is_valid = false;
     }
 
-    if (!is_valid) {
+    if (!is_valid) { // any invalid command prints unsuccessful here
         cout << "unsuccessful" << endl;
     }
     return is_valid;
@@ -276,7 +276,7 @@ bool CampusCompass::printStudentZone(const vector<string> &words) {
     campusGraph.findShortestPaths(student.residenceId, distances, parents);
 
     set<int> zoneLocationIds;
-    zoneLocationIds.insert(student.residenceId);
+    zoneLocationIds.insert(student.residenceId); // add every location on the shortest paths to each class
     for (const string &classCode : student.classCodes) {
         int currentId = classes[classCode].locationId;
         if (distances.count(currentId) == 0) {
@@ -302,7 +302,7 @@ bool CampusCompass::verifySchedule(const vector<string> &words) {
         return false;
     }
 
-    vector<string> sortedCodes;
+    vector<string> sortedCodes; // sorted by start time below
     for (const string &classCode : student.classCodes) {
         sortedCodes.push_back(classCode);
     }
@@ -320,7 +320,7 @@ bool CampusCompass::verifySchedule(const vector<string> &words) {
     for (int i = 0; i < (int)sortedCodes.size() - 1; i++) {
         ClassInfo currentClass = classes[sortedCodes[i]];
         ClassInfo nextClass = classes[sortedCodes[i + 1]];
-        int timeGap = nextClass.startMinutes - currentClass.endMinutes;
+        int timeGap = nextClass.startMinutes - currentClass.endMinutes; // free time between the two classes
 
         unordered_map<int, int> distances;
         unordered_map<int, int> parents;
@@ -343,7 +343,7 @@ bool CampusCompass::splitCommand(const string &command, vector<string> &words) {
 
     for (int i = 0; i < (int)command.size(); i++) {
         char letter = command[i];
-        if (letter == '"') {
+        if (letter == '"') { // keep a quoted name like "Josh Smith" as one word
             currentWord += letter;
             insideQuotes = !insideQuotes;
         } else if (letter == ' ' && !insideQuotes) {
@@ -454,8 +454,7 @@ bool CampusCompass::loadClasses(const string &filepath) {
 
 vector<string> CampusCompass::splitLine(const string &line) {
     string cleanLine = line;
-    // Windows line endings leave a '\r' at the end
-    if (!cleanLine.empty() && cleanLine.back() == '\r') {
+    if (!cleanLine.empty() && cleanLine.back() == '\r') { // windows line endings leave a '\r' at the end
         cleanLine.pop_back();
     }
 
